@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+int main() {
+    // Declaração de variáveis para armazenar informações do aluno
+    char nome[50];
+    int idade;
+    int matricula;
+
+    // Solicita ao usuário para inserir os dados do aluno
+    printf("Digite o nome do aluno: ");
+    scanf("%s", nome);  // Lê o nome do aluno
+
+    printf("Digite a idade do aluno: ");
+    scanf("%d", &idade);  // Lê a idade do aluno
+
+    printf("Digite a matrícula do aluno: ");
+    scanf("%d", &matricula);  // Lê a matrícula do aluno
+
+    // Exibe as informações do aluno cadastradas
+    printf("\n--- Aluno Cadastrado ---\n");
+    printf("Nome: %s\n", nome);
+    printf("Idade: %d\n", idade);
+    printf("Matrícula: %d\n", matricula);
+
+    return 0;
+}
