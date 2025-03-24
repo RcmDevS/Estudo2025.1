@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define MAX_JOGADORES 4
+
+// Função para verificar se um número é par ou ímpar
+const char* par_ou_impar(int numero) {
+    return (numero % 2 == 0) ? "par" : "ímpar";
+}
+
+int main() {
+    int num_jogadores, escolha, numero, soma, i;
+    char nome[MAX_JOGADORES][20];
+
+    // Inicializa o gerador de números aleatórios
+    srand(time(NULL));
+
+    // Solicita o número de jogadores
+    printf("Bem-vindo ao jogo Par ou Ímpar!\n");
+    printf("Quantos jogadores (0 a %d)? ", MAX_JOGADORES);
+    scanf("%d", &num_jogadores);
+
+    // Verifica se o número de jogadores é válido
+    if (num_jogadores < 0 || num_jogadores > MAX_JOGADORES) {
+        printf("Número de jogadores inválido! O número deve estar entre 0 e %d.\n", MAX_JOGADORES);
+        return 1;
+    }
+
+    // Se não houver jogadores humanos, jogar contra o computador
+    if (num_jogadores == 0) {
+        printf("Você jogará contra o computador!\n");
+        printf("Escolha:\n1. Par\n2. Ímpar\n");
+        scanf("%d", &escolha);
+
+        // Verifica se a escolha é válida
+        if (escolha != 1 && escolha != 2) {
+            printf("Escolha inválida!\n");
+            return 1;
+        }
+
+        printf("Digite um número: ");
+        scanf("%d", &numero);
+
+        // O computador escolhe um número aleatório
+        int numero_computador = rand() % 10; // Número aleatório de 0 a 9
+        printf("O computador escolheu: %d\n", numero_computador);
+
+        // Soma dos números
+        soma = numero + numero_computador;
+        printf("Soma total: %d (%s)\n", soma, par_ou_impar(soma));
+
+        // Verifica quem ganhou
+        if ((escolha == 1 && soma % 2 == 0) || (escolha == 2 && soma % 2 != 0)) {
+            printf("Parabéns, você ganhou!\n");
+        } else {
+            printf("O computador ganhou! Tente novamente.\n");
+        }
+    } else {
+        // Coleta os nomes dos jogadores
+        for (i = 0; i < num_jogadores; i++) {
+            printf("Nome do jogador %d: ", i + 1);
+            scanf("%s", nome[i]);
+        }
+
+        // Jogo principal
+        while (1) {
+            soma = 0;
+
+            // Coleta as escolhas de cada jogador
+            for (i = 0; i < num_jogadores; i++) {
+                printf("%s, você escolhe:\n1. Par\n2. Ímpar\n", nome[i]);
+                scanf("%d", &escolha);
+
+                // Verifica se a escolha é válida
+                if (escolha != 1 && escolha != 2) {
+                    printf("Escolha inválida! Tente novamente.\n");
+                    i--; // Volta uma iteração para tentar novamente
+                    continue;
+                }
+
+                printf("%s, digite um número: ", nome[i]);
+                scanf("%d", &numero);
+                soma += numero;
+
+                // Mostra a escolha do jogador
+                printf("%s escolheu: %d (%s)\n", nome[i], numero, (escolha == 1) ? "par" : "ímpar");
+            }
+
+            // Mostra a soma total e verifica o resultado
+            printf("Soma total: %d (%s)\n", soma, par_ou_impar(soma));
+
+            // Verifica quem ganhou
+            int ganhador = -1;
+            for (i = 0; i < num_jogadores; i++) {
+                // Verifica a escolha correspondente ao jogador
+                if ((escolha == 1 && soma % 2 == 0) || (escolha == 2 && soma % 2 != 0)) {
+                    ganhador = i;
+                    break;
+                }
+            }
+
+            if (ganhador != -1) {
+                printf("Parabéns %s, você ganhou!\n", nome[ganhador]);
+            } else {
+                printf("Ninguém ganhou! Tente novamente.\n");
+            }
+
+            // Pergunta se os jogadores querem jogar novamente
+            char jogar_novamente;
+            printf("Desejam jogar novamente? (s/n): ");
+            scanf(" %c", &jogar_novamente);
+            if (jogar_novamente != 's') {
+                break;
+            }
+        }
+    }
+
+    printf("Obrigado por jogar!\n");
+    return 0;
+}
