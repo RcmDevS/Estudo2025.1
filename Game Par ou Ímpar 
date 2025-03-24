@@ -18,17 +18,17 @@ int main() {
 
     // Solicita o número de jogadores
     printf("Bem-vindo ao jogo Par ou Ímpar!\n");
-    printf("Quantos jogadores (0 a %d)? ", MAX_JOGADORES);
+    printf("Quantos jogadores (1 a %d)? ", MAX_JOGADORES);
     scanf("%d", &num_jogadores);
 
     // Verifica se o número de jogadores é válido
-    if (num_jogadores < 0 || num_jogadores > MAX_JOGADORES) {
-        printf("Número de jogadores inválido! O número deve estar entre 0 e %d.\n", MAX_JOGADORES);
+    if (num_jogadores < 1 || num_jogadores > MAX_JOGADORES) {
+        printf("Número de jogadores inválido! O número deve estar entre 1 e %d.\n", MAX_JOGADORES);
         return 1;
     }
 
-    // Se não houver jogadores humanos, jogar contra o computador
-    if (num_jogadores == 0) {
+    // Se o número de jogadores for 1, jogar contra o computador
+    if (num_jogadores == 1) {
         printf("Você jogará contra o computador!\n");
         printf("Escolha:\n1. Par\n2. Ímpar\n");
         scanf("%d", &escolha);
