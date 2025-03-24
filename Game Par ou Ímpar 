@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MAX_JOGADORES 4
+#define MAX_RODADAS 5
 
 // Função para verificar se um número é par ou ímpar
 const char* par_ou_impar(int numero) {
@@ -10,110 +10,97 @@ const char* par_ou_impar(int numero) {
 }
 
 int main() {
-    int num_jogadores, escolha, numero, soma, i;
-    char nome[MAX_JOGADORES][20];
+    int num_jogadores, escolha, numero, soma, i, pontos1 = 0, pontos2 = 0;
+    char nome1[20], nome2[20];
 
     // Inicializa o gerador de números aleatórios
     srand(time(NULL));
 
     // Solicita o número de jogadores
     printf("Bem-vindo ao jogo Par ou Ímpar!\n");
-    printf("Quantos jogadores (1 a %d)? ", MAX_JOGADORES);
+    printf("Quantos jogadores (1 ou 2)? ");
     scanf("%d", &num_jogadores);
 
     // Verifica se o número de jogadores é válido
-    if (num_jogadores < 1 || num_jogadores > MAX_JOGADORES) {
-        printf("Número de jogadores inválido! O número deve estar entre 1 e %d.\n", MAX_JOGADORES);
+    if (num_jogadores < 1 || num_jogadores > 2) {
+        printf("Número de jogadores inválido! O número deve ser 1 ou 2.\n");
         return 1;
     }
 
-    // Se o número de jogadores for 1, jogar contra o computador
-    if (num_jogadores == 1) {
-        printf("Você jogará contra o computador!\n");
-        printf("Escolha:\n1. Par\n2. Ímpar\n");
+    // Coleta os nomes dos jogadores
+    if (num_jogadores == 2) {
+        printf("Nome do jogador 1: ");
+        scanf("%s", nome1);
+        printf("Nome do jogador 2: ");
+        scanf("%s", nome2);
+    } else {
+        printf("Nome do jogador: ");
+        scanf("%s", nome1);
+        snprintf(nome2, sizeof(nome2), "Computador"); // Nome do computador
+    }
+
+    // Jogo principal
+    for (int rodada = 1; rodada <= MAX_RODADAS; rodada++) {
+        printf("\nRodada %d:\n", rodada);
+        soma = 0;
+
+        // Jogador 1 escolhe par ou ímpar
+        printf("%s, você escolhe:\n1. Par\n2. Ímpar\n", nome1);
         scanf("%d", &escolha);
 
         // Verifica se a escolha é válida
         if (escolha != 1 && escolha != 2) {
-            printf("Escolha inválida!\n");
-            return 1;
+            printf("Escolha inválida! Tente novamente.\n");
+            rodada--; // Não conta esta rodada
+            continue;
         }
 
-        printf("Digite um número: ");
+        // O segundo jogador recebe a escolha oposta
+        int escolha2 = (escolha == 1) ? 2 : 1;
+        printf("%s, você será %s.\n", nome2, (escolha2 == 1) ? "par" : "ímpar");
+
+        // Coleta o número do jogador 1
+        printf("%s, digite um número: ", nome1);
         scanf("%d", &numero);
+        soma += numero;
 
-        // O computador escolhe um número aleatório
-        int numero_computador = rand() % 10; // Número aleatório de 0 a 9
-        printf("O computador escolheu: %d\n", numero_computador);
+        // O computador escolhe um número aleatório, se for o caso
+        int numero2;
+        if (num_jogadores == 1) {
+            numero2 = rand() % 10; // Número aleatório de 0 a 9
+            printf("O computador escolheu: %d\n", numero2);
+        } else {
+            printf("%s, digite um número: ", nome2);
+            scanf("%d", &numero2);
+        }
+        soma += numero2;
 
-        // Soma dos números
-        soma = numero + numero_computador;
+        // Mostra a soma total e verifica o resultado
         printf("Soma total: %d (%s)\n", soma, par_ou_impar(soma));
 
-        // Verifica quem ganhou
+        // Verifica quem ganhou a rodada
         if ((escolha == 1 && soma % 2 == 0) || (escolha == 2 && soma % 2 != 0)) {
-            printf("Parabéns, você ganhou!\n");
+            printf("Parabéns %s, você ganhou esta rodada!\n", nome1);
+            pontos1++;
         } else {
-            printf("O computador ganhou! Tente novamente.\n");
+            printf("Parabéns %s, você ganhou esta rodada!\n", nome2);
+            pontos2++;
         }
+
+        // Mostra os pontos acumulados
+        printf("Pontos: %s - %d | %s - %d\n", nome1, pontos1, nome2, pontos2);
+
+        // Verifica se alguém atingiu 3 pontos
+        if (pontos1 == 3 || pontos2 == 3) {
+            break;
+        }
+    }
+
+    // Anuncia o vencedor
+    if (pontos1 > pontos2) {
+        printf("Parabéns %s, você ganhou o jogo!\n", nome1);
     } else {
-        // Coleta os nomes dos jogadores
-        for (i = 0; i < num_jogadores; i++) {
-            printf("Nome do jogador %d: ", i + 1);
-            scanf("%s", nome[i]);
-        }
-
-        // Jogo principal
-        while (1) {
-            soma = 0;
-
-            // Coleta as escolhas de cada jogador
-            for (i = 0; i < num_jogadores; i++) {
-                printf("%s, você escolhe:\n1. Par\n2. Ímpar\n", nome[i]);
-                scanf("%d", &escolha);
-
-                // Verifica se a escolha é válida
-                if (escolha != 1 && escolha != 2) {
-                    printf("Escolha inválida! Tente novamente.\n");
-                    i--; // Volta uma iteração para tentar novamente
-                    continue;
-                }
-
-                printf("%s, digite um número: ", nome[i]);
-                scanf("%d", &numero);
-                soma += numero;
-
-                // Mostra a escolha do jogador
-                printf("%s escolheu: %d (%s)\n", nome[i], numero, (escolha == 1) ? "par" : "ímpar");
-            }
-
-            // Mostra a soma total e verifica o resultado
-            printf("Soma total: %d (%s)\n", soma, par_ou_impar(soma));
-
-            // Verifica quem ganhou
-            int ganhador = -1;
-            for (i = 0; i < num_jogadores; i++) {
-                // Verifica a escolha correspondente ao jogador
-                if ((escolha == 1 && soma % 2 == 0) || (escolha == 2 && soma % 2 != 0)) {
-                    ganhador = i;
-                    break;
-                }
-            }
-
-            if (ganhador != -1) {
-                printf("Parabéns %s, você ganhou!\n", nome[ganhador]);
-            } else {
-                printf("Ninguém ganhou! Tente novamente.\n");
-            }
-
-            // Pergunta se os jogadores querem jogar novamente
-            char jogar_novamente;
-            printf("Desejam jogar novamente? (s/n): ");
-            scanf(" %c", &jogar_novamente);
-            if (jogar_novamente != 's') {
-                break;
-            }
-        }
+        printf("Parabéns %s, você ganhou o jogo!\n", nome2);
     }
 
     printf("Obrigado por jogar!\n");
