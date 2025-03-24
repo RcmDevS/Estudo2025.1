@@ -1,0 +1,141 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// Função para mostrar as regras do jogo
+void mostrarRegras() {
+    printf("=== Regras do Jogo ===\n");
+    printf("1. Pedra, Papel e Tesoura é um jogo simples entre dois jogadores.\n");
+    printf("2. Cada jogador escolhe uma das três opções:\n");
+    printf("   - Pedra (1)\n");
+    printf("   - Papel (2)\n");
+    printf("   - Tesoura (3)\n");
+    printf("3. As regras são as seguintes:\n");
+    printf("   - Pedra vence Tesoura\n");
+    printf("   - Tesoura vence Papel\n");
+    printf("   - Papel vence Pedra\n");
+    printf("4. Se ambos jogadores escolherem a mesma opção, é um empate.\n");
+    printf("5. O computador irá escolher aleatoriamente com base no nível de dificuldade.\n");
+    printf("6. Níveis de dificuldade:\n");
+    printf("   - Nível 1: Fácil (movimento aleatório)\n");
+    printf("   - Nível 2: Médio (escolha aleatória)\n");
+    printf("   - Nível 3: Difícil (lembra a última jogada do jogador)\n");
+    printf("7. O primeiro jogador a alcançar 3 pontos vence o jogo.\n");
+    printf("8. Boa sorte!\n");
+}
+
+// Função para mostrar o menu principal
+void mostrarMenu() {
+    printf("=== Jogo de Pedra, Papel e Tesoura ===\n");
+    printf("1. Jogar\n");
+    printf("2. Regras\n");
+    printf("3. Sair\n");
+    printf("Escolha uma opção: ");
+}
+
+// Função para escolher a jogada do computador com base no nível de dificuldade
+int escolherJogadaComputador(int nivel, int ultimaEscolha) {
+    if (nivel == 1) {
+        return rand() % 3 + 1; // Nível fácil: movimento aleatório
+    } else if (nivel == 2) {
+        return rand() % 3 + 1; // Nível médio: escolha aleatória
+    } else {
+        // Nível difícil: o computador "lembra" do último movimento do jogador
+        if (ultimaEscolha == 1) return 2; // Se o jogador escolheu Pedra, o computador escolhe Papel
+        if (ultimaEscolha == 2) return 3; // Se o jogador escolheu Papel, o computador escolhe Tesoura
+        if (ultimaEscolha == 3) return 1; // Se o jogador escolheu Tesoura, o computador escolhe Pedra
+    }
+    return rand() % 3 + 1; // Retorno padrão
+}
+
+// Função para jogar Pedra, Papel e Tesoura
+void jogar() {
+    int escolhaJogador, escolhaComputador;
+    int nivel, pontosJogador = 0, pontosComputador = 0;
+
+    printf("Escolha o nível de dificuldade:\n");
+    printf("1. Fácil\n");
+    printf("2. Médio\n");
+    printf("3. Difícil\n");
+    printf("Digite sua escolha: ");
+    scanf("%d", &nivel);
+
+    while (pontosJogador < 3 && pontosComputador < 3) {
+        printf("\nEscolha:\n");
+        printf("1. Pedra\n");
+        printf("2. Papel\n");
+        printf("3. Tesoura\n");
+        printf("Digite sua escolha: ");
+        scanf("%d", &escolhaJogador);
+
+        // Gera a escolha do computador
+        escolhaComputador = escolherJogadaComputador(nivel, escolhaJogador);
+
+        // Exibe as escolhas
+        printf("Você escolheu: ");
+        switch (escolhaJogador) {
+            case 1: printf("Pedra\n"); break;
+            case 2: printf("Papel\n"); break;
+            case 3: printf("Tesoura\n"); break;
+            default: 
+                printf("Escolha inválida!\n");
+                continue;
+        }
+
+        printf("Computador escolheu: ");
+        switch (escolhaComputador) {
+            case 1: printf("Pedra\n"); break;
+            case 2: printf("Papel\n"); break;
+            case 3: printf("Tesoura\n"); break;
+        }
+
+        // Determina o vencedor
+        if (escolhaJogador == escolhaComputador) {
+            printf("Empate!\n");
+        } else if ((escolhaJogador == 1 && escolhaComputador == 3) ||
+                   (escolhaJogador == 2 && escolhaComputador == 1) ||
+                   (escolhaJogador == 3 && escolhaComputador == 2)) {
+            printf("Você ganhou esta rodada!\n");
+            pontosJogador++;
+        } else {
+            printf("Você perdeu esta rodada!\n");
+            pontosComputador++;
+        }
+
+        printf("Placar: Você %d - %d Computador\n", pontosJogador, pontosComputador);
+    }
+
+    // Exibe o vencedor final
+    if (pontosJogador == 3) {
+        printf("Parabéns! Você venceu o jogo!\n");
+    } else {
+        printf("O computador venceu o jogo! Tente novamente!\n");
+    }
+}
+
+// Função principal
+int main() {
+    int opcao;
+    srand(time(0)); // Inicializa o gerador de números aleatórios
+
+    do {
+        mostrarMenu();
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                jogar(); // Inicia o jogo
+                break;
+            case 2:
+                mostrarRegras(); // Exibe as regras
+                break;
+            case 3:
+                printf("Saindo do jogo. Até mais!\n");
+                break;
+            default:
+                printf("Opção inválida. Tente novamente.\n");
+        }
+    } while (opcao != 3);
+
+    return 0;
+}
